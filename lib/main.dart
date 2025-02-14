@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-import 'screens/splash_login/splash_page.dart';
+// import 'screens/splash_login/splash_page.dart';
+import 'screens/home_page.dart';
 
 List<CameraDescription> cameras = [];
 
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(), // Optional: Use dark mode for better UI
-      home: const SplashPage(),
+      home: HomePage(),
     );
   }
 }
