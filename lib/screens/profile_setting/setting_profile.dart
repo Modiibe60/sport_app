@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+// import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'edit_profile_page.dart';
 import 'faq_page.dart';
@@ -10,30 +10,33 @@ class SettingProfilePage extends StatefulWidget {
   const SettingProfilePage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _SettingProfilePageState createState() => _SettingProfilePageState();
 }
 
 class _SettingProfilePageState extends State<SettingProfilePage> {
   File? _profileImage;
 
-  Future<void> _pickImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _profileImage = File(pickedFile.path);
-      });
-    }
-  }
+  // Future<void> _pickImage() async {
+  //   final pickedFile =
+  //       await ImagePicker().pickImage(source: ImageSource.gallery);
+  //   if (pickedFile != null) {
+  //     setState(() {
+  //       _profileImage = File(pickedFile.path);
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF121212), // Dark Theme Background
+      backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
-        centerTitle: true, // This centers the title
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
         title: const Text(
-          'Profile.',
+          'Profile',
           style: TextStyle(
               color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
         ),
@@ -42,47 +45,33 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         children: [
           const SizedBox(height: 20),
+          // Profile Picture
           Center(
             child: Column(
               children: [
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.5),
-                        blurRadius: 10,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  ),
-                  child: CircleAvatar(
-                    radius: 55,
-                    backgroundColor: Colors.grey.shade800,
-                    backgroundImage: _profileImage != null
-                        ? FileImage(_profileImage!)
-                        : const NetworkImage('https://via.placeholder.com/150')
-                            as ImageProvider,
-                  ),
+                CircleAvatar(
+                  radius: 55,
+                  backgroundColor: Colors.grey.shade800,
+                  backgroundImage: _profileImage != null
+                      ? FileImage(_profileImage!)
+                      : const NetworkImage('https://via.placeholder.com/150')
+                          as ImageProvider,
                 ),
                 const SizedBox(height: 10),
-                TextButton(
-                  onPressed: _pickImage,
-                  child: const Text(
-                    'Change Photo',
-                    style: TextStyle(
-                        color: Colors.redAccent,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
+                // TextButton(
+                //   onPressed: _pickImage,
+                //   child: const Text(
+                //     'Change Photo',
+                //     style: TextStyle(
+                //         color: Colors.redAccent,
+                //         fontSize: 16,
+                //         fontWeight: FontWeight.bold),
+                //   ),
+                // ),
               ],
             ),
           ),
@@ -112,8 +101,8 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
           _buildListTile(
             icon: Icons.person,
             title: 'Edit Profile',
-            onTap: () =>
-                Navigator.push(context, _pageRoute(const EditProfilePage())),
+            onTap: () => Navigator.push(context,
+                _pageRoute(EditProfilePage(profileImage: _profileImage))),
           ),
           _buildListTile(
             icon: Icons.question_answer,
@@ -136,39 +125,39 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
       ),
     );
   }
+}
 
-  Widget _buildListTile(
-      {required IconData icon,
-      required String title,
-      required VoidCallback onTap}) {
-    return Column(
-      children: [
-        ListTile(
-          leading: Icon(icon, color: Colors.white, size: 26),
-          title: Text(
-            title,
-            style: const TextStyle(
-                color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500),
-          ),
-          trailing:
-              const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
-          onTap: onTap,
+Widget _buildListTile(
+    {required IconData icon,
+    required String title,
+    required VoidCallback onTap}) {
+  return Column(
+    children: [
+      ListTile(
+        leading: Icon(icon, color: Colors.white, size: 26),
+        title: Text(
+          title,
+          style: const TextStyle(
+              color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500),
         ),
-        Divider(color: Colors.grey.shade800, thickness: 0.5),
-      ],
-    );
-  }
+        trailing:
+            const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
+        onTap: onTap,
+      ),
+      Divider(color: Colors.grey.shade800, thickness: 0.5),
+    ],
+  );
+}
 
-  PageRouteBuilder _pageRoute(Widget page) {
-    return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => page,
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return SlideTransition(
-          position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-              .animate(animation),
-          child: child,
-        );
-      },
-    );
-  }
+PageRouteBuilder _pageRoute(Widget page) {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => page,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return SlideTransition(
+        position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
+            .animate(animation),
+        child: child,
+      );
+    },
+  );
 }

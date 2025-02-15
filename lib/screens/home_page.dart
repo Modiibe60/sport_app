@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
@@ -288,15 +290,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-// ??? Floating Menu
-  Widget _buildMenuPositioned() {
-    return Positioned(
-      right: 16,
-      top: 60,
-      child: _buildMenu(),
-    );
-  }
-
 // ?? Helper for Action Buttons
   Widget _buildActionButton(
     IconData icon,
@@ -318,45 +311,103 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _buildMenuPositioned() {
+    return _isMenuOpen
+        ? Stack(
+            children: [
+              // Detect taps outside to close the menu
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _isMenuOpen = false;
+                  });
+                },
+                child: Container(
+                  color: Colors.black.withOpacity(0.4), // Dark overlay
+                  width: double.infinity,
+                  height: double.infinity,
+                ),
+              ),
+
+              // Animated Floating Menu
+              Positioned(
+                right: 10,
+                top: 67,
+                child: _buildMenu(),
+              ),
+            ],
+          )
+        : const SizedBox();
+  }
+
   Widget _buildMenu() {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-          // ignore: deprecated_member_use
-          color: Colors.black.withOpacity(0.8),
-          borderRadius: BorderRadius.circular(12.0)),
-      child: Column(
-        children: [
-          _buildMenuItem(Icons.message, 'Message', const DirectMessagesPage()),
-          _buildMenuItem(
-              Icons.notifications, 'Notifications', const NotificationPage()),
-          _buildMenuItem(Icons.search, 'Search', const SearchPage()),
-          _buildMenuItem(Icons.group, 'Friends', const FriendsPage()),
-          _buildMenuItem(Icons.flag_sharp, 'Team', const TeamNewPage()),
-        ],
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                blurRadius: 10,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildMenuItem(
+                  Icons.message, 'Message', const DirectMessagesPage()),
+              _buildMenuItem(Icons.notifications, 'Notifications',
+                  const NotificationPage()),
+              _buildMenuItem(Icons.search, 'Search', const SearchPage()),
+              _buildMenuItem(Icons.group, 'Friends', const FriendsPage()),
+              _buildMenuItem(Icons.flag_sharp, 'Team', const TeamNewPage()),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildMenuItem(IconData icon, String label, Widget targetPage) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => targetPage),
-          );
-        },
-        child: Row(
-          children: [
-            Icon(icon, color: Colors.white),
-            const SizedBox(width: 8.0),
-            Text(
-              label,
-              style: const TextStyle(color: Colors.white),
-            ),
-          ],
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _isMenuOpen = false; // Close menu when clicking a menu item
+        });
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => targetPage));
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Align(
+          // Aligns the content to the left
+          alignment: Alignment.centerLeft,
+          child: Row(
+            mainAxisSize: MainAxisSize.max, // Prevents taking full width
+            crossAxisAlignment:
+                CrossAxisAlignment.start, // Keeps text and icon aligned
+            children: [
+              Icon(icon, color: Colors.white, size: 26),
+              const SizedBox(width: 12),
+              Text(
+                label,
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
         ),
       ),
     );
