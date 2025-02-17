@@ -33,8 +33,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final PageController _pageController = PageController();
   List<String> videoPaths = [
-    'assets/videos/boys.mp4',
-    'assets/videos/boys.mp4',
+    'assets/videos/boys2.mp4',
+    'assets/videos/boys1.mp4',
     'assets/videos/boys.mp4'
   ];
   final List<VideoPlayerController> _controllers = [];
@@ -374,14 +374,20 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildMenuItem(IconData icon, String label, Widget targetPage) {
-    return GestureDetector(
+    return InkWell(
       onTap: () {
         setState(() {
-          _isMenuOpen = false; // Close menu when clicking a menu item
+          _isMenuOpen = false; // Close the menu
         });
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => targetPage));
+
+        Future.delayed(Duration(milliseconds: 100), () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => targetPage),
+          );
+        });
       },
+      borderRadius: BorderRadius.circular(8),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
@@ -389,25 +395,19 @@ class _HomePageState extends State<HomePage> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Align(
-          // Aligns the content to the left
-          alignment: Alignment.centerLeft,
-          child: Row(
-            mainAxisSize: MainAxisSize.max, // Prevents taking full width
-            crossAxisAlignment:
-                CrossAxisAlignment.start, // Keeps text and icon aligned
-            children: [
-              Icon(icon, color: Colors.white, size: 26),
-              const SizedBox(width: 12),
-              Text(
-                label,
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500),
+        child: Row(
+          children: [
+            Icon(icon, color: Colors.white, size: 26),
+            const SizedBox(width: 12),
+            Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

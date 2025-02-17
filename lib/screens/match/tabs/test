@@ -1,0 +1,209 @@
+import 'package:flutter/material.dart';
+
+class LineupsTab extends StatelessWidget {
+  const LineupsTab();
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        // Football Field Background
+        Container(
+          color: Colors.blueGrey[900], // Dark background
+        ),
+
+        // Players positioned on the field
+        _buildPlayers(),
+      ],
+    );
+  }
+
+  Widget _buildPlayers() {
+    // Mock data for players' positions
+    final List<Map<String, dynamic>> players = [
+      // Red Team (Top Side)
+      {
+        "name": "M. Lamb",
+        "number": "32",
+        "x": 0.5,
+        "y": 0.05,
+        "color": Colors.red
+      },
+      {
+        "name": "K. West",
+        "number": "4",
+        "x": 0.15,
+        "y": 0.15,
+        "color": Colors.red
+      },
+      {
+        "name": "M. Keynote",
+        "number": "18",
+        "x": 0.35,
+        "y": 0.15,
+        "color": Colors.red
+      },
+      {
+        "name": "A. Smith",
+        "number": "3",
+        "x": 0.65,
+        "y": 0.15,
+        "color": Colors.red
+      },
+      {
+        "name": "K. Kinsey",
+        "number": "06",
+        "x": 0.85,
+        "y": 0.15,
+        "color": Colors.red
+      },
+      {
+        "name": "D. Partey",
+        "number": "34",
+        "x": 0.30,
+        "y": 0.25,
+        "color": Colors.red
+      },
+      {
+        "name": "G. Marten",
+        "number": "5",
+        "x": 0.55,
+        "y": 0.25,
+        "color": Colors.red
+      },
+      {
+        "name": "K. West",
+        "number": "8",
+        "x": 0.20,
+        "y": 0.35,
+        "color": Colors.red
+      },
+      {
+        "name": "M. Keynote",
+        "number": "7",
+        "x": 0.50,
+        "y": 0.35,
+        "color": Colors.red
+      },
+      {
+        "name": "A. Smith",
+        "number": "35",
+        "x": 0.80,
+        "y": 0.35,
+        "color": Colors.red
+      },
+      {
+        "name": "A. Heard",
+        "number": "9",
+        "x": 0.50,
+        "y": 0.45,
+        "color": Colors.red
+      },
+
+      // Blue Team (Bottom Side)
+      {
+        "name": "M. Lamb",
+        "number": "32",
+        "x": 0.5,
+        "y": 0.95,
+        "color": Colors.blue
+      },
+      {
+        "name": "K. West",
+        "number": "8",
+        "x": 0.15,
+        "y": 0.85,
+        "color": Colors.blue
+      },
+      {
+        "name": "A. Smith",
+        "number": "35",
+        "x": 0.50,
+        "y": 0.85,
+        "color": Colors.blue
+      },
+      {
+        "name": "M. Keynote",
+        "number": "7",
+        "x": 0.85,
+        "y": 0.85,
+        "color": Colors.blue
+      },
+      {
+        "name": "G. Marten",
+        "number": "5",
+        "x": 0.35,
+        "y": 0.75,
+        "color": Colors.blue
+      },
+      {
+        "name": "D. Partey",
+        "number": "34",
+        "x": 0.65,
+        "y": 0.75,
+        "color": Colors.blue
+      },
+      {
+        "name": "K. West",
+        "number": "14",
+        "x": 0.10,
+        "y": 0.65,
+        "color": Colors.blue
+      },
+      {
+        "name": "A. Smith",
+        "number": "27",
+        "x": 0.40,
+        "y": 0.65,
+        "color": Colors.blue
+      },
+      {
+        "name": "M. Keynote",
+        "number": "34",
+        "x": 0.60,
+        "y": 0.65,
+        "color": Colors.blue
+      },
+      {
+        "name": "K. Kinsey",
+        "number": "3",
+        "x": 0.90,
+        "y": 0.65,
+        "color": Colors.blue
+      },
+      {
+        "name": "A. Heard",
+        "number": "31",
+        "x": 0.50,
+        "y": 0.55,
+        "color": Colors.blue
+      },
+    ];
+
+    return Stack(
+      children: players.map((player) {
+        return Positioned(
+          left: player["x"] * 350, // Adjust for screen width
+          top: player["y"] * 600, // Adjust for screen height
+          child: Column(
+            children: [
+              CircleAvatar(
+                radius: 16,
+                backgroundColor: player["color"],
+                child: Text(
+                  player["number"],
+                  style: const TextStyle(color: Colors.white, fontSize: 14),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                player["name"],
+                style: const TextStyle(color: Colors.white, fontSize: 12),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+}

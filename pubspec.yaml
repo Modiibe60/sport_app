@@ -31,3 +31,6 @@ flutter:
   assets:
     - assets/images/
     - assets/videos/boys.mp4
+    - assets/videos/boys1.mp4
+    - assets/videos/boys2.mp4
+
