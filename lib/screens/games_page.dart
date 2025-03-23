@@ -15,16 +15,6 @@ class _GamesPageState extends State<GamesPage> {
   int selectedTabIndex = 1; // Default index for Games tab
   int selectedTopTab = 0; // 0: Championships, 1: Minigames
 
-  // Dummy Data
-  final List<Map<String, String>> championships = [
-    {"title": "SESSION I", "image": "assets/images/kick_soccer.png"},
-  ];
-
-  final List<Map<String, String>> minigames = [
-    {"title": "Kick soccer ball.", "image": "assets/images/kick_soccer.png"},
-    {"title": "Heading ball.", "image": "assets/images/heading_ball.png"},
-  ];
-
   void _onBottomTabSelected(int index) {
     if (index != selectedTabIndex) {
       switch (index) {
@@ -89,24 +79,6 @@ class _GamesPageState extends State<GamesPage> {
               );
             },
           ),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: Row(
-                children: const [
-                  Text(
-                    "points",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  SizedBox(width: 5),
-                  Text(
-                    "0",
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                ],
-              ),
-            ),
-          ],
         ),
         body: Column(
           children: [
@@ -122,11 +94,14 @@ class _GamesPageState extends State<GamesPage> {
                 ],
               ),
             ),
-            // Content Based on Selected Top Tab
+            // "Coming Soon!" instead of game content
             Expanded(
-              child: selectedTopTab == 0
-                  ? _buildGrid(championships)
-                  : _buildGrid(minigames),
+              child: Center(
+                child: Text(
+                  "Coming soon!",
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ),
             ),
           ],
         ),
@@ -156,109 +131,6 @@ class _GamesPageState extends State<GamesPage> {
       ),
     );
   }
-
-  Widget _buildGrid(List<Map<String, String>> items) {
-    return GridView.builder(
-      padding: const EdgeInsets.all(10),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        childAspectRatio: 0.7,
-      ),
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        final item = items[index];
-        return GestureDetector(
-          onTap: () {
-            // Show detailed task view when tapping a grid item
-            showModalBottomSheet(
-              context: context,
-              builder: (context) => _buildTaskDetails(item),
-            );
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.grey.shade900,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(10)),
-                    child: Image.asset(
-                      item["image"]!,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    item["title"]!,
-                    style: const TextStyle(color: Colors.white, fontSize: 14),
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text(
-                    "0 / 15",
-                    style: TextStyle(color: Colors.grey, fontSize: 12),
-                  ),
-                ),
-                const SizedBox(height: 8),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildTaskDetails(Map<String, String> task) {
-    return Container(
-      color: Colors.black,
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Image.asset(task["image"]!, fit: BoxFit.cover),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            task["title"]!,
-            style: const TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            "0 / 15",
-            style: TextStyle(color: Colors.grey, fontSize: 14),
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/camera'); // Navigate to camera
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              padding: const EdgeInsets.symmetric(vertical: 12.0),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-            ),
-            child: const Text("Start Now"),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class CustomBottomNavigationBar extends StatelessWidget {
@@ -276,10 +148,6 @@ class CustomBottomNavigationBar extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         color: Colors.black,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
-        ),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),

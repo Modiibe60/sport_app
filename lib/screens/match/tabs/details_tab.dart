@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_flutter_app/screens/match/player_info.dart';
 
 class DetailsTab extends StatelessWidget {
   const DetailsTab({super.key});
@@ -8,51 +9,62 @@ class DetailsTab extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          _highlightedPlayer(),
+          _highlightedPlayer(context), // Pass context
           const SizedBox(height: 20),
-          _highestRatedPlayers(),
+          _highestRatedPlayers(context), // Pass context
         ],
       ),
     );
   }
 
-  Widget _highlightedPlayer() {
-    return Container(
-      color: Colors.grey[900],
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "The Best Player of the Match",
-            style: TextStyle(color: Colors.white, fontSize: 16),
+  Widget _highlightedPlayer(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        // Navigate when clicking on highlighted player
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PlayerInfoPage(playerName: "Mohamed Salah"),
           ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              const CircleAvatar(
-                radius: 25,
-                backgroundImage:
-                    NetworkImage("https://via.placeholder.com/150"),
-              ),
-              const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text("Mohamed Salah",
-                      style: TextStyle(color: Colors.white, fontSize: 16)),
-                  Text("Rating: 8.6",
-                      style: TextStyle(color: Colors.blue, fontSize: 14)),
-                ],
-              ),
-            ],
-          ),
-        ],
+        );
+      },
+      child: Container(
+        color: Colors.grey[900],
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "The Best Player of the Match",
+              style: TextStyle(color: Colors.white, fontSize: 16),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                const CircleAvatar(
+                  radius: 25,
+                  backgroundImage:
+                      NetworkImage("https://via.placeholder.com/150"),
+                ),
+                const SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text("Mohamed Salah",
+                        style: TextStyle(color: Colors.white, fontSize: 16)),
+                    Text("Rating: 8.6",
+                        style: TextStyle(color: Colors.blue, fontSize: 14)),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _highestRatedPlayers() {
+  Widget _highestRatedPlayers(BuildContext context) {
     final players = [
       {"name": "Mohamed Salah", "rating": "8.6"},
       {"name": "Trent Alexander-Arnold", "rating": "8.4"},
@@ -82,6 +94,16 @@ class DetailsTab extends StatelessWidget {
                     style: const TextStyle(color: Colors.white)),
                 trailing: Text(player["rating"]!,
                     style: const TextStyle(color: Colors.blue)),
+                onTap: () {
+                  // Navigate when clicking on any player
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          PlayerInfoPage(playerName: player["name"]!),
+                    ),
+                  );
+                },
               );
             }).toList(),
           ),

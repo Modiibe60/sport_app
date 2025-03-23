@@ -1,4 +1,4 @@
-import 'dart:ui';
+// ignore_for_file: use_build_context_synchronously
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -9,11 +9,9 @@ import 'games_page.dart';
 import 'analytics_page.dart';
 import 'main_bottom/main_navigation_page.dart';
 import 'my_profile.dart';
-import 'live_page.dart';
 
 // Import create_live and create_video pages
-import 'create_live_or_video/create_live.dart';
-import 'create_live_or_video/create_video.dart';
+import 'pages/record_video_page.dart';
 
 // Import menu pages
 import 'menu/friends.dart';
@@ -33,8 +31,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final PageController _pageController = PageController();
   List<String> videoPaths = [
-    'assets/videos/boys2.mp4',
-    'assets/videos/boys1.mp4',
+    'assets/videos/boys.mp4',
+    'assets/videos/boys.mp4',
     'assets/videos/boys.mp4'
   ];
   final List<VideoPlayerController> _controllers = [];
@@ -126,82 +124,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void _showCreateDialog(
-      BuildContext context, List<CameraDescription> cameras) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Create New'),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          content: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // ?? Navigate to Video Creation Page
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.video_library, color: Colors.white),
-                  label: const Text('Record Video'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    minimumSize: const Size(double.infinity, 50),
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context); // Close the dialog
-                    if (cameras.isNotEmpty) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              CreateVideoPage(camera: cameras[0]),
-                        ),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('No available cameras!')),
-                      );
-                    }
-                  },
-                ),
-                const SizedBox(height: 12),
-
-                // ?? Navigate to Live Streaming Page
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.live_tv, color: Colors.white),
-                  label: const Text('Go Live'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.redAccent,
-                    minimumSize: const Size(double.infinity, 50),
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context); // Close the dialog
-
-                    if (cameras.isNotEmpty) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              CreateLivePage(camera: cameras[0]),
-                        ),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('No available cameras!')),
-                      );
-                    }
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -215,8 +137,18 @@ class _HomePageState extends State<HomePage> {
             icon: const Icon(Icons.create, color: Colors.white),
             onPressed: () async {
               List<CameraDescription> cameras = await availableCameras();
-              // ignore: use_build_context_synchronously
-              _showCreateDialog(context, cameras);
+              if (cameras.isNotEmpty) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RecordVideoPage(),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('No available cameras!')),
+                );
+              }
             },
           ),
           IconButton(
@@ -224,13 +156,6 @@ class _HomePageState extends State<HomePage> {
             onPressed: _toggleMenu,
           ),
         ],
-        leading: IconButton(
-          icon: const Icon(Icons.live_tv, color: Colors.blue),
-          onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const LivePage()));
-          },
-        ),
       ),
       extendBodyBehindAppBar: true,
       body: PageView.builder(
@@ -284,9 +209,17 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 16),
           _buildActionButton(Icons.comment, '45.4K', _showCommentDialog),
           const SizedBox(height: 16),
-          _buildActionButton(Icons.download_sharp, '19K', () {}),
         ],
       ),
+    );
+  }
+
+// ??? Floating Menu
+  Widget _buildMenuPositioned() {
+    return Positioned(
+      right: 16,
+      top: 60,
+      child: _buildMenu(),
     );
   }
 
@@ -311,101 +244,43 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildMenuPositioned() {
-    return _isMenuOpen
-        ? Stack(
-            children: [
-              // Detect taps outside to close the menu
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _isMenuOpen = false;
-                  });
-                },
-                child: Container(
-                  color: Colors.black.withOpacity(0.4), // Dark overlay
-                  width: double.infinity,
-                  height: double.infinity,
-                ),
-              ),
-
-              // Animated Floating Menu
-              Positioned(
-                right: 10,
-                top: 67,
-                child: _buildMenu(),
-              ),
-            ],
-          )
-        : const SizedBox();
-  }
-
   Widget _buildMenu() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                blurRadius: 10,
-                offset: const Offset(0, 5),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildMenuItem(
-                  Icons.message, 'Message', const DirectMessagesPage()),
-              _buildMenuItem(Icons.notifications, 'Notifications',
-                  const NotificationPage()),
-              _buildMenuItem(Icons.search, 'Search', const SearchPage()),
-              _buildMenuItem(Icons.group, 'Friends', const FriendsPage()),
-              _buildMenuItem(Icons.flag_sharp, 'Team', const TeamNewPage()),
-            ],
-          ),
-        ),
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+          // ignore: deprecated_member_use
+          color: Colors.black.withOpacity(0.8),
+          borderRadius: BorderRadius.circular(12.0)),
+      child: Column(
+        children: [
+          _buildMenuItem(Icons.message, 'Message', const DirectMessagesPage()),
+          _buildMenuItem(
+              Icons.notifications, 'Notifications', const NotificationPage()),
+          _buildMenuItem(Icons.search, 'Search', const SearchPage()),
+          _buildMenuItem(Icons.group, 'Friends', const FriendsPage()),
+          _buildMenuItem(Icons.flag_sharp, 'Team', const TeamNewPage()),
+        ],
       ),
     );
   }
 
   Widget _buildMenuItem(IconData icon, String label, Widget targetPage) {
-    return InkWell(
-      onTap: () {
-        setState(() {
-          _isMenuOpen = false; // Close the menu
-        });
-
-        Future.delayed(Duration(milliseconds: 100), () {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: InkWell(
+        onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => targetPage),
           );
-        });
-      },
-      borderRadius: BorderRadius.circular(8),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        },
         child: Row(
           children: [
-            Icon(icon, color: Colors.white, size: 26),
-            const SizedBox(width: 12),
+            Icon(icon, color: Colors.white),
+            const SizedBox(width: 8.0),
             Text(
               label,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
+              style: const TextStyle(color: Colors.white),
             ),
           ],
         ),

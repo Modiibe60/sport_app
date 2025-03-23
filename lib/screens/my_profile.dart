@@ -227,6 +227,43 @@ class _MyProfilePageState extends State<MyProfilePage> {
   }
 }
 
+// Widget _buildPerformanceSection() {
+//   return Column(
+//     children: [
+//       _buildSectionTitle("Performance Over Time"),
+//       SizedBox(
+//         height: 200,
+//         child: LineChart(
+//           LineChartData(
+//             gridData: FlGridData(show: true),
+//             titlesData: FlTitlesData(
+//               leftTitles: AxisTitles(
+//                   sideTitles: SideTitles(showTitles: true, reservedSize: 30)),
+//               bottomTitles: AxisTitles(
+//                 sideTitles: SideTitles(
+//                   showTitles: true,
+//                   reservedSize: 30,
+//                   getTitlesWidget: (value, _) {
+//                     const labels = ["Apr", "Jun", "Aug", "Oct", "Dec"];
+//                     return Text(labels[value.toInt() % labels.length]);
+//                   },
+//                 ),
+//               ),
+//             ),
+//             lineBarsData: [
+//               LineChartBarData(
+//                 isCurved: true,
+//                 spots: _playerData['performance'],
+//                 belowBarData: BarAreaData(show: true),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     ],
+//   );
+// }
+
 class CustomBottomNavigationBar extends StatelessWidget {
   final int selectedTabIndex;
   final Function(int) onTabSelected;
