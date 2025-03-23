@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
@@ -117,7 +115,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // Toggle Menu
+  // Toggle Menu with updated design (animated fade and slide)
   void _toggleMenu() {
     setState(() {
       _isMenuOpen = !_isMenuOpen;
@@ -141,7 +139,7 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => RecordVideoPage(),
+                    builder: (context) => const RecordVideoPage(),
                   ),
                 );
               } else {
@@ -168,7 +166,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               _buildVideoPlayer(index),
               _buildActionButtons(),
-              if (_isMenuOpen) _buildMenuPositioned(),
+              if (_isMenuOpen) _buildAnimatedMenu(),
             ],
           );
         },
@@ -193,7 +191,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-// ?? Floating Action Buttons for Likes, Comments, and Downloads
+  // Floating Action Buttons for Likes, Comments, etc.
   Widget _buildActionButtons() {
     return Positioned(
       right: 16,
@@ -214,52 +212,60 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-// ??? Floating Menu
-  Widget _buildMenuPositioned() {
+  // Updated Animated Menu Positioned widget
+  Widget _buildAnimatedMenu() {
     return Positioned(
-      right: 16,
-      top: 60,
-      child: _buildMenu(),
+      top: 80,
+      right: 10,
+      child: AnimatedOpacity(
+        opacity: _isMenuOpen ? 1.0 : 0.0,
+        duration: const Duration(milliseconds: 300),
+        child: SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0.5, 0),
+            end: Offset.zero,
+          ).animate(
+            CurvedAnimation(
+              parent: ModalRoute.of(context)!.animation!,
+              curve: Curves.easeOut,
+            ),
+          ),
+          child: _buildMenu(),
+        ),
+      ),
     );
   }
 
-// ?? Helper for Action Buttons
-  Widget _buildActionButton(
-    IconData icon,
-    String label,
-    VoidCallback onPressed, {
-    bool isSelected = false,
-  }) {
-    return Column(
-      children: [
-        IconButton(
-          icon: Icon(icon, color: isSelected ? Colors.red : Colors.white),
-          onPressed: onPressed,
-        ),
-        Text(
-          label,
-          style: const TextStyle(color: Colors.white, fontSize: 12),
-        ),
-      ],
-    );
-  }
-
+  // Updated Menu Design
   Widget _buildMenu() {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-          // ignore: deprecated_member_use
-          color: Colors.black.withOpacity(0.8),
-          borderRadius: BorderRadius.circular(12.0)),
-      child: Column(
-        children: [
-          _buildMenuItem(Icons.message, 'Message', const DirectMessagesPage()),
-          _buildMenuItem(
-              Icons.notifications, 'Notifications', const NotificationPage()),
-          _buildMenuItem(Icons.search, 'Search', const SearchPage()),
-          _buildMenuItem(Icons.group, 'Friends', const FriendsPage()),
-          _buildMenuItem(Icons.flag_sharp, 'Team', const TeamNewPage()),
-        ],
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+        width: 200,
+        padding: const EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.85),
+          borderRadius: BorderRadius.circular(16.0),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black54,
+              blurRadius: 10,
+              offset: Offset(2, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildMenuItem(
+                Icons.message, 'Message', const DirectMessagesPage()),
+            _buildMenuItem(
+                Icons.notifications, 'Notifications', const NotificationPage()),
+            _buildMenuItem(Icons.search, 'Search', const SearchPage()),
+            _buildMenuItem(Icons.group, 'Friends', const FriendsPage()),
+            _buildMenuItem(Icons.flag_sharp, 'Team', const TeamNewPage()),
+          ],
+        ),
       ),
     );
   }
@@ -288,7 +294,26 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Show Comment Dialog to enable comment feature
+  Widget _buildActionButton(
+    IconData icon,
+    String label,
+    VoidCallback onPressed, {
+    bool isSelected = false,
+  }) {
+    return Column(
+      children: [
+        IconButton(
+          icon: Icon(icon, color: isSelected ? Colors.red : Colors.white),
+          onPressed: onPressed,
+        ),
+        Text(
+          label,
+          style: const TextStyle(color: Colors.white, fontSize: 12),
+        ),
+      ],
+    );
+  }
+
   void _showCommentDialog() {
     showDialog(
       context: context,
@@ -303,13 +328,13 @@ class _HomePageState extends State<HomePage> {
             TextButton(
               child: const Text('Cancel'),
               onPressed: () {
-                Navigator.pop(context); // Close the dialog
+                Navigator.pop(context);
               },
             ),
             TextButton(
               child: const Text('Post'),
               onPressed: () {
-                Navigator.pop(context); // Close the dialog
+                Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Comment Posted')),
                 );
