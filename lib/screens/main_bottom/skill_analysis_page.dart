@@ -57,6 +57,7 @@ class _ProfileSkillPageState extends State<ProfileSkillPage> {
             // _buildPerformanceSection(),
             const SizedBox(height: 20),
             _buildSkillsSection(),
+            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -180,6 +181,7 @@ class _ProfileSkillPageState extends State<ProfileSkillPage> {
               gridBorderData: const BorderSide(color: Colors.grey, width: 1),
               dataSets: [
                 RadarDataSet(
+                  // ignore: deprecated_member_use
                   fillColor: Colors.blue.withOpacity(0.3),
                   borderColor: Colors.blue,
                   dataEntries: skills.entries
